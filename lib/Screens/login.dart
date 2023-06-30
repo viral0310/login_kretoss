@@ -6,8 +6,6 @@ import 'package:get/get_navigation/get_navigation.dart';
 import '../Colors/Colors.dart';
 import '../custom/texts.dart';
 
-const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-
 class Loginscreen extends StatefulWidget {
   const Loginscreen({super.key});
 
@@ -36,6 +34,15 @@ class _LoginscreenState extends State<Loginscreen>
 
   int currentIndex = 0;
 
+  String? _selected;
+  List<Map> _myJson = [
+    {'id': '1', 'image': 'images/india.png', 'name': 'INDIA'},
+    {'id': '2', 'image': 'images/canada.png', 'name': 'CANADA'},
+    {'id': '3', 'image': 'images/poland.png', 'name': 'POLAND'},
+    {'id': '4', 'image': 'images/usa.png', 'name': 'USA'},
+    {'id': '5', 'image': 'images/africa.png', 'name': 'AFRICA'},
+  ];
+
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -48,19 +55,54 @@ class _LoginscreenState extends State<Loginscreen>
       ),
       body: Column(
         children: [
-          const Column(
+          Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     "    Login Account",
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
-                  DropdownButtonExample(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: DropdownButton(
+                            value: _selected,
+                            onChanged: (newValue) {
+                              setState(() {
+                                _selected = newValue as String?;
+                              });
+                            },
+                            items: _myJson.map((Country) {
+                              return DropdownMenuItem(
+                                value: Country['id'],
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                        Country['image'],
+                                      ),
+                                    )
+                                    /* Image.asset(
+                                      Country['image'],
+                                      width: 30,
+                                    ),*/
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-              Text(
+              const Text(
                 "Hello,Welcome back to our accout                       ",
                 style: TextStyle(
                   fontSize: 15,
@@ -104,7 +146,8 @@ class _LoginscreenState extends State<Loginscreen>
               ),
             ],
           ),
-          Expanded(
+          SizedBox(
+            height: 250,
             child: TabBarView(
               controller: _tabController,
               children: [
@@ -146,53 +189,22 @@ class _LoginscreenState extends State<Loginscreen>
           const SizedBox(
             height: 20,
           ),
-          TextButton(
-              onPressed: () {
-                Get.to(const verification());
-              },
-              child: const Text('Not Register yet ? Create an Account')),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Not Register yet ?"),
+              TextButton(
+                  onPressed: () {
+                    Get.to(const verification());
+                  },
+                  child: const Text(
+                    'Create an Account',
+                    style: TextStyle(color: primary),
+                  )),
+            ],
+          ),
         ],
       ),
-    );
-  }
-}
-
-class DropdownButtonExample extends StatefulWidget {
-  const DropdownButtonExample({super.key});
-
-  @override
-  State<DropdownButtonExample> createState() => _DropdownButtonExampleState();
-}
-
-class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  late String dropdownValue;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(
-        Icons.arrow_drop_down,
-        color: Colors.teal,
-      ),
-      //dropdownColor: Colors.teal,
-      elevation: 16,
-      style: const TextStyle(color: Colors.teal),
-      underline: Container(
-        height: 2,
-        color: Colors.black,
-      ),
-      onChanged: (String? value) {
-        setState(() {
-          dropdownValue = value!;
-        });
-      },
-      items: list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
     );
   }
 }
@@ -206,7 +218,9 @@ Widget _buildEmailLoginTab() {
           const TextField(
             decoration: InputDecoration(
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(50.0))),
+                  borderRadius: BorderRadius.all(
+                Radius.circular(50.0),
+              )),
               labelText: 'Email',
             ),
           ),
